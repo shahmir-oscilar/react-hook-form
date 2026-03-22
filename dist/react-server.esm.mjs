@@ -407,7 +407,8 @@ function getFieldValue(_f) {
     return getFieldValueAs(isUndefined(ref.value) ? _f.ref.value : ref.value, _f);
 }
 
-var getNodeParentName = (name) => name.substring(0, name.search(/\.\d+(\.|$)/)) || name;
+const FIELD_ARRAY_INDEX_PATTERN = /\.\d+(\.|$)/;
+var getNodeParentName = (name) => name.substring(0, name.search(FIELD_ARRAY_INDEX_PATTERN)) || name;
 
 var getResolverOptions = (fieldsNames, _fields, criteriaMode, shouldUseNativeValidation) => {
     const fields = {};
@@ -464,7 +465,7 @@ var isNameInFieldArray = (names, name) => {
     // Check all possible parent paths up to each `.\d+` segment, not just the
     // first. For `steps.0.items.2.name`, this checks both `steps` and
     // `steps.0.items` against the field array name set.
-    const pattern = /\.\d+(\.|$)/g;
+    const pattern = new RegExp(FIELD_ARRAY_INDEX_PATTERN.source, 'g');
     let match;
     while ((match = pattern.exec(name)) !== null) {
         const parentName = name.substring(0, match.index);
